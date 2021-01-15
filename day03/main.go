@@ -16,6 +16,9 @@ var (
 func main() {
 	fmt.Println("--- Part One ---")
 	fmt.Println(Part1("input.txt"))
+
+	fmt.Println("--- Part One ---")
+	fmt.Println(Part2("input.txt"))
 }
 
 func Part1(filename string) int {
@@ -24,6 +27,23 @@ func Part1(filename string) int {
 	for _, line := range lines {
 		if isValidTriangle(getSides(line)) {
 			valid += 1
+		}
+	}
+	return valid
+}
+
+func Part2(filename string) int {
+	lines := input.ReadLines(filename)
+	valid := 0
+	sides := make([][]int, len(lines))
+	for i, line := range lines {
+		sides[i] = getSides(line)
+	}
+	for i := 0; i < len(sides); i += 3 {
+		for j := 0; j < 3; j += 1 {
+			if isValidTriangle([]int{sides[i][j], sides[i+1][j], sides[i+2][j]}) {
+				valid += 1
+			}
 		}
 	}
 	return valid
