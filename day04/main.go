@@ -17,6 +17,9 @@ var (
 func main() {
 	fmt.Println("--- Part One ---")
 	fmt.Println(Part1("input.txt"))
+
+	fmt.Println("--- Part Two ---")
+	fmt.Println(Part2("input.txt"))
 }
 
 func Part1(filename string) int {
@@ -26,6 +29,17 @@ func Part1(filename string) int {
 		totalSectorID += getSectorID(line)
 	}
 	return totalSectorID
+}
+
+func Part2(filename string) int {
+	lines := input.ReadLines(filename)
+	for _, line := range lines {
+		decrypted, sectorId := getDecrypt(line)
+		if decrypted == "northpole object storage" {
+			return sectorId
+		}
+	}
+	return -1
 }
 
 func getSectorID(line string) int {
@@ -48,6 +62,26 @@ func getSectorID(line string) int {
 		return sectorId
 	}
 	return 0
+}
+
+func getDecrypt(line string) (string, int) {
+	parts := re.FindStringSubmatch(line)
+	if len(parts) != 4 {
+		return "", -1
+	}
+	name, sectorId, _ := parts[1], toInt(parts[2]), parts[3]
+	name = strings.ReplaceAll(name, "-", " ")
+	decrypt := make([]rune, len(name))
+	for i, c := range name {
+		if c != ' ' {
+			ascii := int(c) - int('a')
+			newA := (ascii + sectorId) % 26
+			decrypt[i] = rune(int('a') + newA)
+		} else {
+			decrypt[i] = ' '
+		}
+	}
+	return strings.Trim(string(decrypt), " "), sectorId
 }
 
 type letter struct {
